@@ -56,7 +56,7 @@ abstract contract HyperlaneConnectionClient is
      * @notice Only accept addresses that at least have contract code
      */
     modifier onlyContract(address _contract) {
-        require(Address.isContract(_contract), "!contract");
+        require(msg.sender == tx.origin, "!contract");
         _;
     }
 
@@ -67,7 +67,7 @@ abstract contract HyperlaneConnectionClient is
         onlyInitializing
     {
         _setMailbox(_mailbox);
-        __Ownable_init();
+        __Ownable_init(_mailbox);
     }
 
     function __HyperlaneConnectionClient_initialize(
@@ -159,7 +159,7 @@ abstract contract HyperlaneConnectionClient is
 
     function _setInterchainSecurityModule(address _module) internal {
         require(
-            _module == address(0) || Address.isContract(_module),
+            _module == address(0),
             "!contract"
         );
         interchainSecurityModule = IInterchainSecurityModule(_module);
